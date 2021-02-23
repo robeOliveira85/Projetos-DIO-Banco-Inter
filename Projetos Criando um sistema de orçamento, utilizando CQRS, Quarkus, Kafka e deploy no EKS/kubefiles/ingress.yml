@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress #Define que é um proxy reverso
+metadata:
+  name: bankaccount-ingress
+  namespace: quarkus-cqrs-demo
+  annotations:
+    kubernetes.io/ingress.class: alb #É uma configuração moderna do Amazon Web Services
+    alb.ingress.kubernetes.io/scheme: internet-facing
+  labels:
+    app: bankaccount-ingress
+spec:
+  rules:
+    - http:
+        paths: #A parte mais importante, é quem faz a conexão do mundo exterior com os servidores
+          - path: /transaction-service/* #Tudo que vier para esse caminho
+            backend:
+              serviceName: transaction-service #Vai para esse micro-serviço
+              servicePort: 8080
+          - path: /balance-service/* #Tudo que vier para esse caminho
+            backend:
+              serviceName: balance-service #Vai para esse micro-serviço
+              servicePort: 8080    
